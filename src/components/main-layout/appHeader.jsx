@@ -19,6 +19,9 @@ function AppHeader() {
         <Nav pullRight>
           <Nav.Item icon={<CogIcon />}>Settings</Nav.Item>
         </Nav>
+        <Nav pullRight>
+          <Nav.Item icon={<CogIcon />}>Settings</Nav.Item>
+        </Nav>
       </Navbar>
     </>
   )

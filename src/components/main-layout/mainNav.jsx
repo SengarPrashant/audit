@@ -96,7 +96,7 @@ const RecursiveComponent = ({ data, parentIndex, selectedKey }) => {
             <RecursiveComponent data={menu.children} parentIndex={i} />
           </Nav.Menu>
           :
-          <Nav.Item eventKey={key} key={key} as={NavLink} to={`/${menu.name}`.toLocaleLowerCase().replace(' ','-')}
+          <Nav.Item eventKey={key} key={key} as={NavLink} to={`/${menu.name}`.toLocaleLowerCase().split(' ').join('-')}
             icon={parentIndex == 0 ?
               <MenuIcons icon={menu.icon} className='menu-icon' color={isActive ? colors.primary.main : undefined} />
               : undefined}>
