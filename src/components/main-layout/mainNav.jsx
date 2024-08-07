@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 import { Sidebar, Sidenav, Nav } from 'rsuite';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +11,7 @@ import MenuIcons from './menuIcons';
 
 function MainNav() {
   const [expand, setExpanded] = useState(true);
-  const [activeKey, setActiveKey] = useState('0-0');
+  const [activeKey, setActiveKey] = useState('');
   const menu = useSnapshot(mainMenuStore)
   const navigate = useNavigate();
 
@@ -20,10 +19,21 @@ function MainNav() {
     if (menu.list.length == 0)
       mainMenuStore.load();
   }, [])
+  useEffect(() => {
+    setActiveKey(menu.list[0]?.configMetaId)
+  }, [menu.list])
 
   const setCurrentMenu = (menuItem) => {
     mainMenuStore.setCurrent(menuItem);
     navigate(`/${menuItem.name}`.toLocaleLowerCase().split(' ').join('-'))
+  }
+
+  const onSelect = (key) => {
+    if (key) {
+      setActiveKey(key);
+      const _menu = mainMenuStore.setCurrentById(key);
+      navigate(`/${_menu.name}`.toLocaleLowerCase().split(' ').join('-'))
+    }
   }
 
   return (
@@ -37,11 +47,10 @@ function MainNav() {
         collapsible>
         <Sidenav expanded={expand} appearance='subtle' defaultOpenKeys={[]} style={{ height: `calc(100vh - ${dimentions.header.h}px)` }}>
           <Sidenav.Body>
-            <Nav appearance='subtle' activeKey={activeKey} onSelect={(k) => {
-              k && setActiveKey(k)
-            }}>
-              <RecursiveComponent data={menu.list} parentIndex={0} setCurrent={setCurrentMenu} selectedKey={activeKey} />
+            <Nav activeKey={activeKey} onSelect={onSelect}>
+              <RecursiveComponent list={menu.list} parentIndex={0} current={menu.current} />
             </Nav>
+            
           </Sidenav.Body>
           <Sidenav.Toggle onToggle={expanded => setExpanded(expanded)} />
         </Sidenav>
@@ -50,44 +59,34 @@ function MainNav() {
   )
 }
 
+const RecursiveComponent = ({ list = [], parentIndex, current }) => {
 
-const RecursiveComponent = ({ data, parentIndex, selectedKey, setCurrent }) => {
   return <>
-    {data.map((menu, i) => {
-      const key = `${parentIndex}-${i}`;
+    {list.map((menu, i) => {
 
-
-      const hasActiveChild = (children, parentKey) => {
+      const hasActiveChild = (children) => {
         return children.some((child, index) => {
-          const childKey = `${parentKey}-${index}`;
-          return childKey === selectedKey || (child.children && hasActiveChild(child.children, index));
+          return child.configMetaId === current?.configMetaId || (child.children && hasActiveChild(child.children));
         });
       };
+      const isActive = menu.configMetaId == current?.configMetaId || (menu.children && hasActiveChild(menu.children, i));
 
-      const isActive = key === selectedKey || (menu.children && hasActiveChild(menu.children, i));
 
-      return <>
-        {(menu.children && menu.children.length > 0) ?
-          <Nav.Menu placement="rightStart" key={key} eventKey={key} title={menu.name}
-            icon={<MenuIcons icon={menu.icon} className='menu-icon' color={isActive ? colors.primary.main : undefined} />}>
-            <RecursiveComponent data={menu.children} parentIndex={i} setCurrent={setCurrent} />
-          </Nav.Menu>
-          :
-          <Nav.Item eventKey={key} key={key} // as={NavLink} 
-            onClick={(event) => {
-              event.preventDefault();
-              setCurrent(menu);
-            }}
-            // to={`/${menu.name}`.toLocaleLowerCase().split(' ').join('-')}
-            icon={parentIndex == 0 ?
-              <MenuIcons icon={menu.icon} className='menu-icon' color={isActive ? colors.primary.main : undefined} />
-              : undefined}>
-            {menu.name}
-          </Nav.Item>
-        }
-      </>;
+      return (menu.children && menu.children.length > 0) ?
+        <Nav.Menu placement="rightStart" eventKey={menu.configMetaId} title={menu.name}
+        icon={<MenuIcons icon={menu.icon} className='menu-icon' color={isActive ? colors.primary.main : undefined} />}>
+          <RecursiveComponent list={menu.children} parentIndex={i} />
+        </Nav.Menu>
+        :
+        <Nav.Item eventKey={menu.configMetaId}
+          icon={parentIndex == 0 ?
+            <MenuIcons icon={menu.icon} className='menu-icon' color={isActive ? colors.primary.main : undefined} />
+            : undefined}>
+          {menu.name}</Nav.Item>
     })}
   </>
-};
+}
+
+
 
 export default MainNav
