@@ -10,7 +10,6 @@ import LayoutRenderar from './layoutRenderar';
 const MasterPage = () => {
     const menu = useSnapshot(mainMenuStore);
     const layoutData = useSnapshot(pageStore);
-    console.log(JSON.stringify(layoutData.data));
     useEffect(() => {
         pageStore.load(menu.current?.ConfigMetaId);
     }, [menu.current?.ConfigMetaId]);
