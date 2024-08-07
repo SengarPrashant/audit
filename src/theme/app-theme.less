@@ -4,6 +4,7 @@
 // @import "@rsuite/styles/index.less";
 
 @import './vars.less';
+@import './space.less';
 
 // Enable dark mode
 // @enable-dark-mode: true;
@@ -131,4 +132,17 @@ font-weight: bolder;
 }
 .rs-tree-view{
   max-height: unset;
+}
+
+.tree-to-list{
+  .rs-tree-node-label{
+    width: 100%;
+    margin: 0 8px;
+  };
+  .rs-tree-node-toggle-placeholder{
+    display: none;
+  };
+  .rs-tree-node-active .rs-tree-node-label{
+    font-weight: normal;
+  }
 }

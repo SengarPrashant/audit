@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
-import { Container, Header, Sidebar, Stack, Sidenav, Content, Nav, Breadcrumb, IconButton } from 'rsuite';
+import { Sidebar, Sidenav, Nav } from 'rsuite';
+import { useNavigate } from 'react-router-dom';
+
 
 import { mainMenuStore } from '../../stores/common';
 import { colors, dimentions } from './layoutConfig';
@@ -12,11 +14,17 @@ function MainNav() {
   const [expand, setExpanded] = useState(true);
   const [activeKey, setActiveKey] = useState('0-0');
   const menu = useSnapshot(mainMenuStore)
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (menu.list.length == 0)
       mainMenuStore.load();
   }, [])
+
+  const setCurrentMenu = (menuItem) => {
+    mainMenuStore.setCurrent(menuItem);
+    navigate(`/${menuItem.name}`.toLocaleLowerCase().split(' ').join('-'))
+  }
 
   return (
     <>
@@ -32,39 +40,8 @@ function MainNav() {
             <Nav appearance='subtle' activeKey={activeKey} onSelect={(k) => {
               k && setActiveKey(k)
             }}>
-              <RecursiveComponent data={menu.list} parentIndex={0} selectedKey={activeKey} />
+              <RecursiveComponent data={menu.list} parentIndex={0} setCurrent={setCurrentMenu} selectedKey={activeKey} />
             </Nav>
-            {/* <Nav activeKey={activeKey} onSelect={(k) => {
-              console.log(k)
-              setActiveKey(k)
-            }}>
-              <Nav.Item eventKey="1" icon={<DashboardIcon />}>
-                Dashboard
-              </Nav.Item>
-              <Nav.Item eventKey="2" icon={<GroupIcon />}>
-                User Group
-              </Nav.Item>
-              <Nav.Menu placement="rightStart" eventKey="3" title="Advanced" icon={<MagicIcon />}>
-                <Nav.Item eventKey="3-1">Geo</Nav.Item>
-                <Nav.Item eventKey="3-2">Devices</Nav.Item>
-                <Nav.Item eventKey="3-3">Loyalty</Nav.Item>
-                <Nav.Item eventKey="3-4">Visit Depth</Nav.Item>
-              </Nav.Menu>
-              <Nav.Menu
-                placement="rightStart"
-                eventKey="4"
-                title="Settings"
-                icon={<GearCircleIcon />}
-              >
-                <Nav.Item eventKey="4-1">Applications</Nav.Item>
-                <Nav.Item eventKey="4-2">Channels</Nav.Item>
-                <Nav.Item eventKey="4-3">Versions</Nav.Item>
-                <Nav.Menu eventKey="4-5" title="Custom Action">
-                  <Nav.Item eventKey="4-5-1">Action Name</Nav.Item>
-                  <Nav.Item eventKey="4-5-2">Action Params</Nav.Item>
-                </Nav.Menu>
-              </Nav.Menu>
-            </Nav> */}
           </Sidenav.Body>
           <Sidenav.Toggle onToggle={expanded => setExpanded(expanded)} />
         </Sidenav>
@@ -74,7 +51,7 @@ function MainNav() {
 }
 
 
-const RecursiveComponent = ({ data, parentIndex, selectedKey }) => {
+const RecursiveComponent = ({ data, parentIndex, selectedKey, setCurrent }) => {
   return <>
     {data.map((menu, i) => {
       const key = `${parentIndex}-${i}`;
@@ -93,10 +70,15 @@ const RecursiveComponent = ({ data, parentIndex, selectedKey }) => {
         {(menu.children && menu.children.length > 0) ?
           <Nav.Menu placement="rightStart" key={key} eventKey={key} title={menu.name}
             icon={<MenuIcons icon={menu.icon} className='menu-icon' color={isActive ? colors.primary.main : undefined} />}>
-            <RecursiveComponent data={menu.children} parentIndex={i} />
+            <RecursiveComponent data={menu.children} parentIndex={i} setCurrent={setCurrent} />
           </Nav.Menu>
           :
-          <Nav.Item eventKey={key} key={key} as={NavLink} to={`/${menu.name}`.toLocaleLowerCase().split(' ').join('-')}
+          <Nav.Item eventKey={key} key={key} // as={NavLink} 
+            onClick={(event) => {
+              event.preventDefault();
+              setCurrent(menu);
+            }}
+            // to={`/${menu.name}`.toLocaleLowerCase().split(' ').join('-')}
             icon={parentIndex == 0 ?
               <MenuIcons icon={menu.icon} className='menu-icon' color={isActive ? colors.primary.main : undefined} />
               : undefined}>

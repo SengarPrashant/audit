@@ -5,6 +5,7 @@ import MainLayout from './main-layout';
 export const IndexPage = lazy(() => import('./../pages/home'));
 export const BillingPage = lazy(() => import('./../pages/billing'));
 export const ClientConfig = lazy(() => import('./../pages/client-config'));
+export const MasterPage = lazy(() => import('./../pages/master'));
 
 export default function Router() {
     const routes = useRoutes([
@@ -18,8 +19,11 @@ export default function Router() {
             children:[
                 { element: <IndexPage />, index: true },
                 { index:true, path:"home", element: <IndexPage /> },
-                { path:"billing", element: <BillingPage /> },
-                { path:"client-configuration", element: <ClientConfig /> }
+                { path:"*", element: <MasterPage /> },
+                // { index:true, path:"home", element: <IndexPage /> },
+                // { path:"*", element: <MasterPage /> },
+                // { path:"billing", element: <BillingPage /> },
+                // { path:"client-configuration", element: <ClientConfig /> }
             ]
         }
     ]);

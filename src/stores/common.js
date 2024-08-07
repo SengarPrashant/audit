@@ -13,11 +13,15 @@ export const commonStore = proxy({
 
 export const mainMenuStore = proxy({
     list:[],
-    set(_list=[]) {this.list=[..._list];},
+    current:{},
+    setCurrent(_current={}) {this.current={..._current};},
     load(){
+        // fetch from api
         //  http.get('json-api').then(res=>this.list=[...res]) 
-        this.list = [{"name":"Home","icon":"home","children":[]},{"name":"System Configuration","icon":"sysconf","children":[{"name":"Language Config","children":[]},{"name":"Enums","children":[]},{"name":"Country Codes and Currency","children":[]},{"name":"System Default Parameters","children":[]},{"name":"License Configuration","children":[]}]},{"name":"Client Configuration","icon":"clconf","children":[{"name":"Client Configuration","children":[]},{"name":"License Assignments","children":[]},{"name":"Authentication configuration","children":[]},{"name":"Organizations and Organizational structure","children":[]}]},{"name":"User Management Configuration","icon":"userconf","children":[{"name":"Application User Management","children":[]},{"name":"Role Management","children":[]},{"name":"User to Organization mapping","children":[]}]},{"name":"Module Configuration","icon":"moduleconf","children":[{"name":"Standards Management Module","children":[]},{"name":"Audit Module","children":[]},{"name":"Evidence Management Module","children":[]},{"name":"Finding Module","children":[]},{"name":"Asset Management Module","children":[]},{"name":"Risk Assessment Module","children":[]}]},{"name":"Security Configuration","icon":"secconf","children":[]},{"name":"Billing","icon":"billing","children":[]}]
-        }
+        const menuData=[{"ConfigMetaId":1,"name":"Home","icon":"home","children":[]},{"ConfigMetaId":2,"name":"System Configuration","icon":"sysconf","children":[{"ConfigMetaId":3,"name":"Language","children":[]},{"ConfigMetaId":4,"name":"Enums","children":[]},{"ConfigMetaId":5,"name":"Country Codes and Currency","children":[]},{"ConfigMetaId":6,"name":"System Default Parameters","children":[]},{"ConfigMetaId":7,"name":"License Configuration","children":[]}]},{"ConfigMetaId":8,"name":"Client Configuration","icon":"clconf","children":[{"ConfigMetaId":9,"name":"Client Configuration","children":[]},{"ConfigMetaId":10,"name":"License Assignments","children":[]},{"ConfigMetaId":11,"name":"Authentication configuration","children":[]},{"ConfigMetaId":12,"name":"Organizations and Organizational structure","children":[]}]},{"ConfigMetaId":13,"name":"User Management Configuration","icon":"userconf","children":[{"ConfigMetaId":14,"name":"Application User Management","children":[]},{"ConfigMetaId":15,"name":"Role Management","children":[]},{"ConfigMetaId":16,"name":"User to Organization mapping","children":[]}]},{"ConfigMetaId":17,"name":"Module Configuration","icon":"moduleconf","children":[{"ConfigMetaId":18,"name":"Standards Management Module","children":[]},{"ConfigMetaId":19,"name":"Audit Module","children":[]},{"ConfigMetaId":20,"name":"Evidence Management Module","children":[]},{"ConfigMetaId":21,"name":"Finding Module","children":[]},{"ConfigMetaId":22,"name":"Asset Management Module","children":[]},{"ConfigMetaId":23,"name":"Risk Assessment Module","children":[]}]},{"ConfigMetaId":24,"name":"Security Configuration","icon":"secconf","children":[]},{"ConfigMetaId":25,"name":"Billing","icon":"billing","children":[]}];
+        this.list=[...menuData];
+        this.current={...menuData[0]};
+    }
 });
 
 
