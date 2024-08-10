@@ -3,11 +3,13 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Input, Checkbox, Button, Form as RSForm, HStack, SelectPicker, Row, Col } from 'rsuite';
 import NoData from '../no-data';
+import { IconMap } from '../../assets/icons/iconMap';
 
-const AppForm = ({ formData = [], actions = [], emptyText }) => {
+const AppForm = ({ formDefinition = [], actions = [], emptyText, defaultData }) => {
+    const _defaultData = JSON.parse(JSON.stringify(defaultData));
+
     const formikRef = useRef(null);
     const [action, setAction] = useState('');
-  
 
     const handleSubmit = (values, e) => {
         // make api call here
@@ -15,7 +17,7 @@ const AppForm = ({ formData = [], actions = [], emptyText }) => {
     };
 
     const validationSchema = Yup.object().shape(
-        formData.reduce((schema, field) => {
+        formDefinition.reduce((schema, field) => {
             let validator = Yup.string(); // Default to string
             if (field.validations) {
                 field.validations.forEach(rule => {
@@ -39,17 +41,23 @@ const AppForm = ({ formData = [], actions = [], emptyText }) => {
         <>
             <RSForm>
                 <HStack justifyContent='flex-end' className='py-2'>
-                    {actions.map((item, i) => <Button key={item.action} disabled={item.disabled} appearance="primary" onClick={() => {
+                    {actions.map((item, i) => <Button disabled={item.disabled} onClick={() => {
                         setAction(item.action);
-                        formikRef.current?.submitForm();
-                    }}>{item.label}</Button>)}
+                        if (item.submit) {
+                            formikRef.current?.submitForm();
+                        } else {
+                            // make api call for delete/deactivate
+                        }
+                    }}>
+                        <HStack><IconMap name={item.icon} /> {item.label} </HStack>
+                    </Button>)}
                 </HStack>
             </RSForm>
-            {formData.length==0 && <NoData size={"12%"} text={emptyText} />}
-            <Formik
+            {formDefinition.length == 0 && <NoData size={"12%"} text={emptyText} />}
+            <Formik enableReinitialize
                 innerRef={formikRef}
-                initialValues={formData.reduce((acc, field) => {
-                    acc[field.name] = field.defaultValue || '';
+                initialValues={formDefinition.reduce((acc, field) => {
+                    acc[field.name] = _defaultData[field.name] || field.defaultValue || '';
                     return acc;
                 }, {})}
                 validationSchema={validationSchema}
@@ -59,7 +67,7 @@ const AppForm = ({ formData = [], actions = [], emptyText }) => {
                     <Form>
                         <RSForm>
                             <Row style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                {formData.map((field, index) => (
+                                {formDefinition.map((field, index) => (
                                     <Col xs={24} sm={24} md={12} lg={12} key={index}>
                                         <RSForm.Group key={index} controlId={field.name} style={{ marginBottom: 8 }}>
                                             <RSForm.ControlLabel>{field.label}</RSForm.ControlLabel>

@@ -5,11 +5,3 @@ export const BillingIcon = ({ w = 16, h = 16, className = '', color = 'grey', st
     </svg>
 }
 
-export const BillingIcon1 = ({ w = 16, h = 16, className = '', color = 'grey', style = {} }) => {
-    return <svg width={w+2} height={h+4} className={className} style={style} viewBox="0 0 24 24"><path d="M20,4H4A2,2,0,0,0,2,6V18a2,2,
-    0,0,0,2,2H20a2,2,0,0,0,2-2V6A2,2,0,0,0,20,4Zm-8.5,7h1A2.5,2.5,0,0,1,13,16V16a1,1,0,0,1-2,0H10a1,1,0,0,1,0-2h2.5a.5.5,0,0,0,0-1h-1A2.5,
-    2.5,0,0,1,11,8.05V8a1,1,0,0,1,2,0h1a1,1,0,0,1,0,2H11.5a.5.5,0,0,0,0,1Z" fill={color} ></path></svg>
-}
-
-
-

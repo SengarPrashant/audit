@@ -3,22 +3,26 @@ import { http } from '../helper/http';
 
 export const pageStore = proxy({
     data: {},
-    load(id='') {
+    load(id = '') {
         //  http.get('<apiurl>').then(res=>this.list=[...res]) 
         this.data = {
             layout: 'ListDetail',
             col1: {
-                emptyText:'No data found',
+                emptyText: 'No data found',
                 section: 'list',
-                data: [{ "label": "Hindi", "value": "1" }, { "label": "two", "value": "2" }, { "label": "three", "value": "3" }] // each item/node will have a lable and code/Id
+                // data: [{ "label": "Hindi", "value": "1"}, { "label": "two", "value": "2" }, { "label": "three", "value": "3" }] // each item/node will have a lable and code/Id
+                data: {
+                    keys: { label: 'name', value: 'code' },
+                    list: [{ "name": "Hindi", "code": "1" }, { "name": "two", "code": "2" }, { "name": "three", "code": "3" }]
+                }
             },
             col2: {
                 section: 'form',
-                emptyText:'No fields to display. Please configure the form fields',
-                actionItems:[
-                    { label: 'Update', action: 'save', disabled: false },
-                    { label: 'Deactivate', action: 'deactivate', disabled: false },
-                    { label: 'Delete', action: 'delete', disabled: true },
+                emptyText: 'No fields to display. Please configure the form fields',
+                actionItems: [
+                    { label: 'Save', action: 'save', disabled: false, icon: 'save', submit: true },
+                    { label: 'Deactivate', action: 'deactivate', disabled: false, icon: 'deactivate', submit: false },
+                    { label: 'Delete', action: 'delete', disabled: true, icon: 'delete', submit: false },
                 ],
                 data: [
                     {
@@ -32,7 +36,7 @@ export const pageStore = proxy({
                         selectList: [{}],  // this is the data for select/multiselect dropdown,
                         displayOrder: 1,
                         validations: [
-                            {type:'required', message:'This is required'}
+                            { type: 'required', message: 'This is required' }
                         ],
                     },
                     {
@@ -46,7 +50,7 @@ export const pageStore = proxy({
                         selectList: [{}],  // this is the data for select/multiselect dropdown,
                         displayOrder: 2,
                         validations: [
-                            {type:'required', message:'This is required'}
+                            { type: 'required', message: 'This is required' }
                         ],
                     },
                     {
@@ -60,7 +64,7 @@ export const pageStore = proxy({
                         selectList: [{ value: '1', label: 'India' }],  // this is the data for select/multiselect dropdown,
                         displayOrder: 3,
                         validations: [
-                            {type:'required', message:'This is required'}
+                            { type: 'required', message: 'This is required' }
                         ],
                     }
                 ]
