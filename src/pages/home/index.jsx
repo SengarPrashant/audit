@@ -1,7 +1,6 @@
 import { Stack } from "rsuite"
-import AppTree from "../../components/app-tree"
-import TwoColumn from "../../components/page-layout/twoColumn"
 import { useState } from "react"
+import TableDrawer from "../../page-templates/table-drawer";
 
 
 function Home() {
@@ -10,13 +9,7 @@ function Home() {
 
   return (
     <>
-      <TwoColumn onToggle={setExpended}>
-        <>
-          <AppTree hidden={!expanded} />
-          {!expanded && <h5>col</h5>}
-        </>
-        <h3>Content</h3>
-      </TwoColumn>
+     <h3 className="m-4">This is home page.</h3>
     </>
   )
 }

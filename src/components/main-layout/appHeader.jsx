@@ -9,15 +9,12 @@ function AppHeader() {
       <Navbar appearance='inverse'>
         <Navbar.Brand href="#">LOGO</Navbar.Brand>
         <Nav>
-          <Nav.Item>Home</Nav.Item>
+          {/* <Nav.Item>Home</Nav.Item>
           <Nav.Item>News</Nav.Item>
           <Nav.Item>Products</Nav.Item>
           <Nav.Item>Home</Nav.Item>
           <Nav.Item>News</Nav.Item>
-          <Nav.Item>Products</Nav.Item>
-        </Nav>
-        <Nav pullRight>
-          <Nav.Item icon={<CogIcon />}>Settings</Nav.Item>
+          <Nav.Item>Products</Nav.Item> */}
         </Nav>
         <Nav pullRight>
           <Nav.Item icon={<CogIcon />}>Settings</Nav.Item>

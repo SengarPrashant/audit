@@ -23,10 +23,6 @@ function MainNav() {
     setActiveKey(menu.list[0]?.configMetaId)
   }, [menu.list])
 
-  const setCurrentMenu = (menuItem) => {
-    mainMenuStore.setCurrent(menuItem);
-    navigate(`/${menuItem.name}`.toLocaleLowerCase().split(' ').join('-'))
-  }
 
   const onSelect = (key) => {
     if (key) {

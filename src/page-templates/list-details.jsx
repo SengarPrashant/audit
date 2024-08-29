@@ -20,13 +20,12 @@ function ListDetail({ children, onToggle = (expanded = false) => { } }) {
                     style={{ border: '1px solid #EBEBEB', height: `calc(100vh - ${(dimentions.header.h + dimentions.crumb.h)}px)` }}
                     width={expand ? dimentions.menu.expanded : dimentions.menu.collapsed}>
                     {children[0]}
-                    <NavToggle expand={expand} onChange={() => {
+                    {/* <NavToggle expand={expand} onChange={() => {
                         setExpand(!expand);
                         setTimeout(() => onToggle(!expand), 100);
-                    }} />
+                    }} /> */}
                 </Sidebar>
-                <Content className='px-4'>
-                    {/* {children[1]} */}
+                <Content>
                     {child2}
                 </Content>
             </Container>

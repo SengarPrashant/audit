@@ -1,19 +1,29 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Input, Checkbox, Button, Form as RSForm, HStack, SelectPicker, Row, Col } from 'rsuite';
+import { Panel, Button, Form as RSForm, HStack, Row, Col, Divider, Text } from 'rsuite';
 import NoData from '../no-data';
 import { IconMap } from '../../assets/icons/iconMap';
+import FieldRender from './fieldRender';
 
 const AppForm = ({ formDefinition = [], actions = [], emptyText, defaultData }) => {
     const _defaultData = JSON.parse(JSON.stringify(defaultData));
 
     const formikRef = useRef(null);
     const [action, setAction] = useState('');
+    const [preView, setPreView] = useState();
 
     const handleSubmit = (values, e) => {
         // make api call here
         console.log('Form data', values, action);
+        setPreView({
+            ...values, langData: [
+                { lang: 'en', label: 'Name', value: values.name },
+                { lang: 'sp', label: 'Name', value: 'spanish translation' },
+                { lang: 'en', label: 'Description', value: values.description },
+                { lang: 'sp', label: 'Description', value: 'spanish description translation' },
+            ]
+        })
     };
 
     const validationSchema = Yup.object().shape(
@@ -40,8 +50,8 @@ const AppForm = ({ formDefinition = [], actions = [], emptyText, defaultData }) 
     return (
         <>
             <RSForm>
-                <HStack justifyContent='flex-end' className='py-2'>
-                    {actions.map((item, i) => <Button disabled={item.disabled} onClick={() => {
+                <HStack justifyContent='flex-start'>
+                    {actions.map((item, i) => <Button appearance='link' color='blue' disabled={item.disabled} onClick={() => {
                         setAction(item.action);
                         if (item.submit) {
                             formikRef.current?.submitForm();
@@ -52,83 +62,49 @@ const AppForm = ({ formDefinition = [], actions = [], emptyText, defaultData }) 
                         <HStack><IconMap name={item.icon} /> {item.label} </HStack>
                     </Button>)}
                 </HStack>
+                <Divider style={{ margin: 0 }} />
             </RSForm>
-            {formDefinition.length == 0 && <NoData size={"12%"} text={emptyText} />}
-            <Formik enableReinitialize
-                innerRef={formikRef}
-                initialValues={formDefinition.reduce((acc, field) => {
-                    acc[field.name] = _defaultData[field.name] || field.defaultValue || '';
-                    return acc;
-                }, {})}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-            >
-                {({ values, setFieldValue, handleSubmit }) => (
-                    <Form>
-                        <RSForm>
-                            <Row style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                {formDefinition.map((field, index) => (
-                                    <Col xs={24} sm={24} md={12} lg={12} key={index}>
-                                        <RSForm.Group key={index} controlId={field.name} style={{ marginBottom: 8 }}>
-                                            <RSForm.ControlLabel>{field.label}</RSForm.ControlLabel>
-                                            <Field name={field.name}>
-                                                {({ field: formikField }) => {
-                                                    switch (field.controleType) {
-                                                        case 'text':
-                                                            return <Input
-                                                                {...formikField}
-                                                                type={field.controleType}
-                                                                onChange={(value) => setFieldValue(field.name, value)}
-                                                                placeholder={field.placeHolder}
-                                                            />;
-                                                        case 'email':
-                                                            return ("NA")
-                                                        case 'select':
-                                                            return (<SelectPicker block
-                                                                data={field.selectList}
-                                                                onChange={(value) => {
-                                                                    // console.log(value);
-                                                                    setFieldValue(field.name, value)
-                                                                }} />)
-                                                        case 'number':
-                                                            return (
-                                                                <Input
-                                                                    {...formikField}
-                                                                    type={field.controleType}
-                                                                    onChange={(value) => setFieldValue(field.name, value)}
-                                                                    placeholder={field.placeHolder}
-                                                                />
-                                                            );
-                                                        case 'checkbox':
-                                                            return (
-                                                                <Checkbox
-                                                                    {...formikField}
-                                                                    checked={values[field.name]}
-                                                                    onChange={(value, checked) =>
-                                                                        setFieldValue(field.name, checked)
-                                                                    }
-                                                                >
-                                                                    {field.label}
-                                                                </Checkbox>
-                                                            );
-                                                        default:
-                                                            return null;
-                                                    }
-                                                }}
-                                            </Field>
-                                            {field.helpText && <RSForm.HelpText>{field.helpText}</RSForm.HelpText>}
-                                            <div style={{ minHeight: 20 }}>
-                                                <ErrorMessage name={field.name} component="div"
-                                                    style={{ color: 'red' }} />
-                                            </div>
-                                        </RSForm.Group>
-                                    </Col>
-                                ))}
-                            </Row>
-                        </RSForm>
-                    </Form>
-                )}
-            </Formik>
+            <Panel>
+
+                {(formDefinition.length == 0 && !preview) && <NoData size={"12%"} text={emptyText} />}
+                {!preView && <Formik enableReinitialize
+                    innerRef={formikRef}
+                    initialValues={formDefinition.reduce((acc, field) => {
+                        acc[field.name] = _defaultData[field.name] || field.defaultValue || '';
+                        return acc;
+                    }, {})}
+                    validationSchema={validationSchema}
+                    onSubmit={handleSubmit}
+                >
+                    {({ values, setFieldValue, handleSubmit }) => (
+                        <Form>
+                            <RSForm>
+                                <Row style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                    {formDefinition.map((field, index) => (
+                                        <Col xs={24} sm={24} md={12} lg={12} key={index}>
+                                            <RSForm.Group key={index} controlId={field.name} style={{ marginBottom: 8 }}>
+                                                <FieldRender field={field} setFieldValue={setFieldValue} />
+                                            </RSForm.Group>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            </RSForm>
+                        </Form>
+                    )}
+                </Formik>}
+                {preView && <Panel>
+                    <Row>
+                        {preView.langData.map((item, i) => {
+                            return <Col xs={12} key={i}>
+                                <HStack className='p-2'>
+                                    <Text weight='bold'>{item.label}</Text>
+                                    <Text>{item.value}</Text>
+                                </HStack>
+                            </Col>
+                        })}
+                    </Row>
+                </Panel>}
+            </Panel>
         </>
     );
 };

@@ -9,6 +9,24 @@ export const commonStore = proxy({
     stopLoading() { this.loading = false; },
     showError(errors = []) { this.error = [...errors]; },
     closeError() { this.error = [...[]]; },
+
+    breadCrumb: [],
+    initBreadCrumb(item = '') {
+        if (item) this.breadCrumb = [item];
+    },
+    addBreadCrumb(item = '') {
+        if (item && !this.breadCrumb.includes(item)) this.breadCrumb.push(item);
+    },
+    removeBreadCrumb(item = '', replace) {
+        if (item) {
+            // const index = this.breadCrumb.indexOf(item);
+            this.breadCrumb = this.breadCrumb.filter(x => x != item);
+        }
+    },
+
+    commonLangConfig: {
+
+    }
 });
 
 
@@ -16,11 +34,18 @@ export const mainMenuStore = proxy({
     list: [],
     current: {},
     setCurrent(_current = {}) { this.current = { ..._current }; },
-    setCurrentById(id) { 
-        const ob= findMenuByConfigMetaId(this.list,id);
-        this.current=ob;
+    setCurrentById(id) {
+        const ob = findMenuByConfigMetaId(this.list, id);
+        this.current = ob;
+
+        const parents = findMenuPath(this.list, id);
+        parents.map((x, i) => {
+            if (i == 0) commonStore.initBreadCrumb(x.name);
+            else commonStore.addBreadCrumb(x.name)
+        })
+
         return JSON.parse(JSON.stringify(ob));
-     },
+    },
     load() {
         // fetch from api
         //  http.get('json-api').then(res=>this.list=[...res]) 
@@ -28,7 +53,7 @@ export const mainMenuStore = proxy({
         this.list = [...menuData];
         this.current = { ...menuData[0] };
     },
-    
+
 });
 
 const findMenuByConfigMetaId = (menu, id) => {
@@ -41,7 +66,23 @@ const findMenuByConfigMetaId = (menu, id) => {
         return result;
     }, null);
 };
-
+function findMenuPath(menu, targetId) {
+    let result = [];
+    function searchMenu(items, path) {
+        const item = _.find(items, { configMetaId: targetId });
+        if (item) {
+            result = [...path, item];
+            return true;
+        }
+        return _.some(items, (child) => {
+            if (searchMenu(child.children, [...path, child])) {
+                return true;
+            }
+        });
+    }
+    searchMenu(menu, []);
+    return result;
+}
 
 export const userStore = proxy({
     profile: {},
