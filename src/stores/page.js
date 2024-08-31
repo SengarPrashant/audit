@@ -43,19 +43,14 @@ const dummydata = {
                 title: "Manage language",
                 emptyText: 'No data found',
                 fixedActionItems: { prev: "Previous", next: "Preview Translation", save: "Save" },
-                actionItems:[
-                    {
-                        label: 'Delete', disabled: false, icon: 'delete', event: {
-                            id: 13, name: 'delete-confirmation',
-                            title: 'Delete Confirmation', message: 'Are you sure you want to delete {resourcename}? This action cannot be undone.',
-                            resourceName:"name"
-                        }
-                    }
-                ],
-                // actionItems1: [
-                //     { label: 'Previous', disabled: false, icon: 'prev', iconPosition: 'left', event: { id: 1123, name: 'prev' } },
-                //     { label: 'Preview Translation', disabled: false, icon: 'next', iconPosition: 'right', event: { id: 111, name: 'api-preview', target: 'post|langugae/translate' } },
-                //     { label: 'Save', disabled: false, icon: 'save', iconPosition: 'left', event: { id: 222, name: 'api-submit', target: 'post|langugae/save' } },
+                // actionItems: [
+                //     {
+                //         label: 'Delete', disabled: false, icon: 'delete', event: {
+                //             id: 13, name: 'delete-confirmation',
+                //             title: 'Delete Confirmation', message: 'Are you sure you want to delete {resourcename}? This action cannot be undone.',
+                //             resourceName: "name"
+                //         }
+                //     }
                 // ],
                 steps: [
                     {
@@ -92,7 +87,39 @@ const dummydata = {
                             ],
                         }]
                     },
-                    { type: 'preview-translation', title: "Save translation", translate: "api/translate" }
+                    {
+                        type: 'form-array', title: "Save translation",
+                        event: {
+                            name: 'api-save',
+                            api: "post|api/translate",
+                        },
+                        definition: [{
+                            name: 'name',
+                            label: "Language Name",
+                            placeHolder: 'Enter language name',
+                            helpText: '',
+                            dataType: "string",
+                            controleType: "text", // number, decimal, select, checkbox, radio, currency, date
+                            defaultValue: "",
+                            selectList: [{}],  // this is the data for select/multiselect dropdown,
+                            displayOrder: 1,
+                            validations: [{ type: 'required', message: 'This is required' }],
+                        },
+                        {
+                            name: 'code',
+                            label: "Language Code",
+                            placeHolder: 'Enter language code',
+                            helpText: '',
+                            dataType: "string",
+                            controleType: "text",
+                            defaultValue: "",
+                            selectList: [{}],  // this is the data for select/multiselect dropdown,
+                            displayOrder: 2,
+                            validations: [
+                                { type: 'required', message: 'This is required' }
+                            ],
+                        }]
+                    }
                 ],
 
             }
@@ -379,7 +406,7 @@ const dummydata = {
                                 id: 13, name: 'delete-confirmation',
 
                                 title: 'Delete Confirmation', message: 'Are you sure you want to delete {resourcename}? This action cannot be undone.'
-                                ,resourceName:"name"
+                                , resourceName: "name"
                             }
 
                         }

@@ -1,15 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Col, Content, Divider, HStack, Panel, Row, Text, Form as RSForm, } from 'rsuite';
 import { IconMap } from '../../assets/icons/iconMap';
-import { Formik, Form } from 'formik';
-import FormField, { getInitValues, getValidationSchema } from '../../helper/formHelper';
+import { Formik, Form, FieldArray } from 'formik';
+import FormField, { getInitValues, getValidationSchema, getValidationSchemaArray } from '../../helper/formHelper';
 import { constants } from '../main-layout/layoutConfig';
 import AppConfirmation from '../app-modals/AppConfirmation';
 
 const StepForm = ({ config = {}, defaultData }) => {
     const [stepData, setStepData] = useState({ currentStep: 0, values: {}, loading: false });
     const formikRef = useRef(null);
-    const [confirmartion, setConfirmation] = useState({open, });
     const { steps, fixedActionItems, actionItems } = config;
     useEffect(() => {
         if (defaultData) {
@@ -22,7 +21,13 @@ const StepForm = ({ config = {}, defaultData }) => {
 
     const handleSubmit = (values, e) => {
         console.log(values);
-        onNext(values);
+        if (stepData.currentStep < steps.length - 1) {
+            onNext(values);
+        } else {
+          //  setStepData()
+          const finalData={ ...stepData, values: { ...stepData.values, [stepData.currentStep]: values.data } };
+          console.log(finalData);
+        }
     }
     const onNext = (vals) => {
         const nextStepData = steps[stepData.currentStep + 1];
@@ -82,18 +87,9 @@ const StepForm = ({ config = {}, defaultData }) => {
         setStepData({ ...stepData, currentStep: stepData.currentStep - 1 })
     }
 
-    const onActionClick = (item) => {
-        const { event } = item;
-
-        if(event.name == constants.events.deleteConfirm){
-            event.message = event.message.replace('{resourcename}', `#h${event.metaData?.name}#h`)
-            setConfirmation()
-        }
-    }
-
     return (
         <>
-            <AppConfirmation  />
+            <AppConfirmation />
             <HStack>
                 <RSForm>
                     <Button appearance='link' disabled={stepData.currentStep == 0} onClick={onPrev}>
@@ -107,20 +103,11 @@ const StepForm = ({ config = {}, defaultData }) => {
                     </Button>
                     <Button appearance='link' disabled={(steps && stepData.currentStep < steps.length - 1)}
                         onClick={() => {
-                            console.log(stepData);
+                            // console.log(stepData);
+                            formikRef.current?.submitForm();
                         }}>
                         <HStack><IconMap name='save' style={{ marginTop: 2 }} /> {fixedActionItems.save} </HStack>
                     </Button>
-
-                    {actionItems.map(item => {
-                        return <Button appearance='link' disabled={defaultData == undefined}
-                            onClick={() => {
-                                onActionClick(item);
-                            }}>
-                            <HStack><IconMap name={item.icon} style={{ marginTop: 2 }} /> {item.label} </HStack>
-                        </Button>
-                    })}
-
                 </RSForm>
             </HStack>
             <Divider style={{ margin: 0 }} />
@@ -148,6 +135,42 @@ const StepForm = ({ config = {}, defaultData }) => {
                         </Formik>
                     </>
                 }
+
+                {steps && steps[stepData.currentStep]?.type == 'form-array' && <>
+                    <Formik innerRef={formikRef} initialValues={{ data: [{ name: '', code: '' }, { name: '', code: '' }] }}
+                        onSubmit={handleSubmit}
+                        validationSchema={getValidationSchemaArray(steps[stepData.currentStep]?.definition)}
+                        enableReinitialize>
+                        {({ values, setFieldValue }) => {
+                            return <Form>
+                                <RSForm>
+                                    <FieldArray>
+                                        {({ insert, remove, push }) => {
+                                            return <>
+                                                {values.data.map((row, rowIndex) => {
+                                                    return <>
+                                                        <Row style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                                            {steps[stepData.currentStep]?.definition.map((field, index) => {
+                                                                const fldName = `data.${rowIndex}.${field.name}`;
+                                                                return <Col xs={24} sm={24} md={12} lg={12} key={field.name}>
+                                                                    <RSForm.Group key={index} controlId={field.name} style={{ marginBottom: 8 }}>
+                                                                        <FormField field={{ ...field, name: fldName }} setFieldValue={setFieldValue} values={values} />
+                                                                    </RSForm.Group>
+                                                                </Col>
+                                                            })}
+                                                        </Row>
+                                                        <Divider style={{ marginTop: 0 }} />
+                                                    </>
+                                                })}
+                                            </>
+                                        }}
+                                    </FieldArray>
+                                </RSForm>
+                            </Form>
+                        }}
+                    </Formik>
+                </>}
+
                 {(steps && steps[stepData.currentStep]?.type == constants.events.previewTranslation) && <>
                     {stepData.values[stepData.currentStep] && stepData.values[stepData.currentStep].map((x, i) => {
                         return <>

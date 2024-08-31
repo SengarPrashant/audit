@@ -28,6 +28,81 @@ export const getValidationSchema = (formDefinition = []) => {
     return validationSchema;
 }
 
+export const getValidationSchemaArray = (formDefinition = []) => {
+    const schema = Yup.object().shape({
+        data: Yup.array().of(
+            Yup.object().shape(
+                formDefinition.reduce((schema, field) => {
+                    let validator;
+                    switch (field.type) {
+                        case 'string':
+                            validator = Yup.string();
+                            break;
+                        case 'number':
+                            validator = Yup.number();
+                            break;
+                        default:
+                            validator = Yup.string(); // Default to string if type not specified
+                    }
+                    
+                    if (field.validations) {
+                        field.validations.forEach(rule => {
+                            if (rule.type === 'required') {
+                                validator = validator.required(rule.message);
+                            }
+                            if (rule.type === 'email') {
+                                validator = validator.email(rule.message);
+                            }
+                            if (rule.type === 'min') {
+                                validator = validator.min(rule.value, rule.message);
+                            }
+                            if (rule.type === 'max') {
+                                validator = validator.max(rule.value, rule.message);
+                            }
+                            // Add other validation rules as needed
+                        });
+                    }
+
+                    return { ...schema, [field.name]: validator };
+                }, {})
+            )
+        )
+    });
+
+    return schema;
+};
+
+
+// export const getValidationSchemaArray = (formDefinition = []) => {
+
+//     const schema = Yup.object().shape({
+//         data: Yup.array()
+//             .of(
+//                 Yup.object().shape(formDefinition.reduce((schema, field) => {
+//                     let validator = Yup.string(); // Default to string
+//                     if (field.validations) {
+//                         field.validations.forEach(rule => {
+//                             if (rule.type === 'required') {
+//                                 validator = validator.required(rule.message);
+//                             }
+//                             if (rule.type === 'email') {
+//                                 validator = validator.email(rule.message);
+//                             }
+//                             if (rule.type === 'number') {
+//                                 validator = Yup.number().required(rule.message);
+//                             }
+//                         });
+//                     }
+
+//                     return { ...schema, [field.name]: validator };
+//                 }, {}))
+//             )
+//     });
+
+//     return schema;
+
+// }
+
 export const getInitValues = (formDefinition = [], defaultData) => {
     const _defaultData = defaultData || [];
     var vals = formDefinition.reduce((acc, field) => {
@@ -80,8 +155,6 @@ const FormField = ({ field, setFieldValue, values }) => {
                         );
                     case 'form':
                         return (
-
-
                             <FieldArray name={field.name}>
                                 {({ remove, push }) => (
                                     <>
