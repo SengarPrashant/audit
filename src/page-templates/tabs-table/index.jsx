@@ -89,7 +89,8 @@ const TabsTable = ({ pageData }) => {
                                 label: 'Edit', disabled: false, icon: 'edit', event: {
                                     id: 12, name: 'open-multistep-drawer-form', title: "Update Enum element",
                                     formSteps: [{
-                                        type: 'form', formDefinition: [{
+                                        type: 'form', 
+                                        formDefinition: [{
                                             name: 'name',
                                             label: "Enum element name",
                                             placeHolder: 'Enter Enum element name',

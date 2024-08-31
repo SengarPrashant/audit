@@ -18,12 +18,6 @@ function AppBreadCrumb({ }) {
                 {store.breadCrumb.map((item,i)=>{
                     return <Breadcrumb.Item href="#" key={i}>{item}</Breadcrumb.Item>
                 })}
-                {/* <Breadcrumb.Item href="#">Item A</Breadcrumb.Item>
-                <Breadcrumb.Item href="#">Item B</Breadcrumb.Item>
-                <Breadcrumb.Item href="#">Item C</Breadcrumb.Item>
-                <Breadcrumb.Item href="#">Item D</Breadcrumb.Item>
-                <Breadcrumb.Item href="#">Item E</Breadcrumb.Item>
-                <Breadcrumb.Item href="#">Item F</Breadcrumb.Item> */}
             </Breadcrumb>
         </>
     )

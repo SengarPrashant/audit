@@ -114,12 +114,12 @@ font-weight: bolder;
     width: 100%;
     margin: 0 8px;
   };
+  .rs-tree-node-dragging{
+    outline: unset;
+  }
   .rs-tree-node-toggle-placeholder{
     display: none;
   };
-  .rs-tree-node-active .rs-tree-node-label{
-    font-weight: normal;
-  }
   .rs-search-box{
     width: 85%;
   }
@@ -200,4 +200,9 @@ font-weight: bolder;
 
 .info-border {
   border: 1px solid @info-color;
+}
+
+.req-label{
+  color: @error-color;
+  font-weight: bold;
 }

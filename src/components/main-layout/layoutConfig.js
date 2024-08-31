@@ -20,6 +20,9 @@ export const colors = {
 
 export const constants = {
     actionCodes: { create: 'create', save: 'save', delete: 'delete', cancel: 'cancel', detail: 'detail' },
-    events: { openDrawerForm: 'open-drawer-form',openmultiStepDrawerForm: 'open-multistep-drawer-form', newTab: 'newtab', deleteConfirm:'delete-confirmation',
-        submit: 'submit', next: 'next', prev: 'prev', reloadtable: 'reloadtable', previewTranslation:'preview-translation' }
+    events: {
+        openDrawerForm: 'open-drawer-form', openmultiStepDrawerForm: 'open-multistep-drawer-form', newTab: 'newtab', deleteConfirm: 'delete-confirmation',
+        submit: 'submit', next: 'next', prev: 'prev', reloadtable: 'reloadtable', previewTranslation: 'preview-translation',
+        edit: 'edit', create: 'create', apiPreview : 'api-preview'
+    }
 }

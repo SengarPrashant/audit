@@ -111,7 +111,6 @@ const DrawerFormMultistep = ({ open = false, onClose = () => { },
                     {(formSteps && formSteps[steps.currentStep]?.type == constants.events.previewTranslation) && <>
                         {steps.values[steps.currentStep] && steps.values[steps.currentStep].map((x, i) => {
                             return <>
-
                                 <Panel key={x.lang} bordered className='mb-3'>
                                     <Text className='info-text mb-2' weight='bold'>{x.label}</Text>
                                     {x.data && x.data.map((ob, index) => {

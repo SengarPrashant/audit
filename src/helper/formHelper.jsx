@@ -4,7 +4,7 @@ import { Input, Checkbox, Button, Form as RSForm, SelectPicker, Row, Col, Panel,
 import { IconMap } from '../assets/icons/iconMap';
 
 
-export const getValidationSchema=(formDefinition=[])=>{
+export const getValidationSchema = (formDefinition = []) => {
     const validationSchema = Yup.object().shape(
         formDefinition.reduce((schema, field) => {
             let validator = Yup.string(); // Default to string
@@ -21,16 +21,16 @@ export const getValidationSchema=(formDefinition=[])=>{
                     }
                 });
             }
-    
+
             return { ...schema, [field.name]: validator };
         }, {})
     );
     return validationSchema;
 }
 
-export const getInitValues=(formDefinition=[],defaultData)=>{
+export const getInitValues = (formDefinition = [], defaultData) => {
     const _defaultData = defaultData || [];
-    var vals= formDefinition.reduce((acc, field) => {
+    var vals = formDefinition.reduce((acc, field) => {
         acc[field.name] = _defaultData[field.name] || field.defaultValue || '';
         return acc;
     }, {})
@@ -38,9 +38,12 @@ export const getInitValues=(formDefinition=[],defaultData)=>{
     return vals;
 }
 
- const FormField = ({ field, setFieldValue, values }) => {
+const FormField = ({ field, setFieldValue, values }) => {
+    const isReq = field.validations && field.validations.filter(x => x.type.toLocaleLowerCase() == 'required').length > 0
     return <>
-        {field.controleType != 'form' && <RSForm.ControlLabel style={{ visibility: field.controleType == 'checkbox' ? 'hidden' : 'visible' }}>{field.label}</RSForm.ControlLabel>}
+        {field.controleType != 'form' && <RSForm.ControlLabel style={{ visibility: field.controleType == 'checkbox' ? 'hidden' : 'visible' }}>
+            {isReq && <span className='req-label'> | </span>}{field.label}
+        </RSForm.ControlLabel>}
         <Field name={field.name}>
             {({ field: formikField }) => {
                 switch (field.controleType) {
